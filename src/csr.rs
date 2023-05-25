@@ -50,9 +50,8 @@ pub fn norm_squared(a: &[f32]) -> f32 {
 /// dt is the time step, h is the grid spacing, and alpha is the diffusion coefficient.
 /// 
 /// The discretization is implicit Euler, and assumes a square grid with m x m grid points.
-pub fn poisson_matrix(m: usize, dt: f32, alpha: f32) -> CSRMatrix {
-    let m_f32 = m as f32;
-    let k = m_f32 * m_f32 * alpha * dt;
+pub fn poisson_matrix(m: usize, dt: f32, h: f32, alpha: f32) -> CSRMatrix {
+    let k = alpha * dt / (h*h);
     let diag = 1.0 + 4.0 * k;
     let off_diag = -k;
     let nnz = m * (5 * m - 2) - 2;
@@ -104,9 +103,10 @@ mod tests {
     fn test_vmul_zero() {
         use crate::csr::poisson_matrix;
         let m = 100;
+        let h = 0.1;
         let dt = 0.1;
         let alpha = 1.0;
-        let a = poisson_matrix(m, dt, alpha);
+        let a = poisson_matrix(m, dt, h, alpha);
         // m x m random values
         let x = vec![0.0; m*m];
         let mut b = vec![1.0; m*m];

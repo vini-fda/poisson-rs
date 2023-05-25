@@ -51,9 +51,10 @@ mod tests {
         use crate::conj_grad::conjugate_gradient;
         let mut rng = rand::thread_rng();
         let m = 100;
+        let h = 0.1;
         let dt = 0.01;
         let alpha = 1.0;
-        let a = poisson_matrix(m, dt, alpha);
+        let a = poisson_matrix(m, dt, h, alpha);
         let mut b = vec![0.0; m*m];
         // m x m random values
         let x_soln = random_vector(m*m, &mut rng);
