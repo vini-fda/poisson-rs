@@ -13,20 +13,22 @@ pub fn conjugate_gradient(a: &CSRMatrix, b: &[f32], x: &mut [f32]) {
         return;
     }
     let mut p = r.clone();
+    let mut rnew = r.clone();
     for _ in 0..a.nrows() {
         let mut q = vec![0.0; b.len()];
         a.vmul(&p, &mut q); // q = Ap
         let alpha = norm_squared(&r) / dot_product(&p, &q);
         for i in 0..b.len() {
             x[i] += alpha * p[i];
-            r[i] -= alpha * q[i];
+            rnew[i] -= alpha * q[i];
         }
-        if norm_squared(&r) < TOL {
+        if norm_squared(&rnew) < TOL {
             return;
         }
-        let beta = norm_squared(&r) / norm_squared(&p);
+        let beta = norm_squared(&rnew) / norm_squared(&r);
+        r = rnew.clone();
         for i in 0..b.len() {
-            p[i] = r[i] + beta * p[i];
+            p[i] = rnew[i] + beta * p[i];
         }
     }
 }
